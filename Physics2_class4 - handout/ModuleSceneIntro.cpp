@@ -43,7 +43,7 @@ bool ModuleSceneIntro::Start()
 
 	//sensor = App->physics->CreateRectangleSensor(455+10, 834+5, 25, 21);
 
-	int left_bouncer[22] = {
+	int left_block[22] = {
 		11, 16,
 		11, 105,
 		53, 134,
@@ -52,14 +52,26 @@ bool ModuleSceneIntro::Start()
 		69, 129,
 		69, 122,
 		32, 13,
-		28, 9,
+		28, 10,
 		17, 9,
 		11, 16,
 	};
-	leftbouncer.add(App->physics->CreateChain(51, 600, left_bouncer, 21, b2_staticBody));
+	
+	leftbouncer.add(App->physics->CreateChain(51, 600, left_block, 21, b2_staticBody, 0.3f));
 
-	int right_bouncer[20] = {
-		61, 9,
+	int left_block_bouncer[10] = {
+		372, 610,
+		334, 722,
+		348, 723,
+		380, 616,
+		372, 610
+	};
+	
+	App->physics->CreateChain(0, 0, left_block_bouncer, 9, b2_staticBody, 1.1f);
+
+
+	int right_block[20] = {
+		61, 10,
 		50, 9,
 		44, 15,
 		9, 123,
@@ -70,13 +82,24 @@ bool ModuleSceneIntro::Start()
 		67, 16,
 		61, 9
 	};
-	rightbouncer.add(App->physics->CreateChain(325, 600, right_bouncer, 19, b2_staticBody));
+	
+	rightbouncer.add(App->physics->CreateChain(325, 600, right_block, 19, b2_staticBody, 0.3f));
+
+	int right_block_bouncer[10] = {
+		121, 723,
+		83, 612,
+		74, 616,
+		107, 724,
+		121, 723
+	};
+	
+	App->physics->CreateChain(0, 0, right_block_bouncer, 9, b2_staticBody, 1.1f);
 
 	rightflipper = App->physics->CreateRectangle(250+30, 790+13, 77,14, b2_dynamicBody);
 	leftflipper=App->physics->CreateRectangle(140+41, 790+13, 77,14, b2_dynamicBody);
 
-	l_flipper_joint =App->physics->CreateCircle(144+9, 800+3, 5, b2_staticBody);
-	r_flipper_joint =App->physics->CreateCircle(300 + 7, 800 + 3, 5, b2_staticBody);
+	l_flipper_joint =App->physics->CreateCircle(144+9, 800+3, 5, b2_staticBody, 0.0f);
+	r_flipper_joint =App->physics->CreateCircle(300 + 7, 800 + 3, 5, b2_staticBody, 0.0f);
 
 	def_1.Initialize(leftflipper->body, l_flipper_joint->body, l_flipper_joint->body->GetWorldCenter());
 	def_2.Initialize(r_flipper_joint->body, rightflipper->body, r_flipper_joint->body->GetWorldCenter());
@@ -107,8 +130,6 @@ bool ModuleSceneIntro::CleanUp()
 update_status ModuleSceneIntro::Update()
 {
 	App->renderer->Blit(BackGround, 0, 0, NULL);
-	//App->renderer->Blit(RightFlipper, 250, 790, NULL);
-	//App->renderer->Blit(LeftFlipper, 0, 0, NULL);
 
 	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
@@ -119,7 +140,7 @@ update_status ModuleSceneIntro::Update()
 
 	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
-		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 11, b2_dynamicBody));
+		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 11, b2_dynamicBody, 0.0f));
 		circles.getLast()->data->listener = this;
 	}
 
@@ -166,7 +187,7 @@ update_status ModuleSceneIntro::Update()
 			30, 62
 		};
 
-		ricks.add(App->physics->CreateChain(App->input->GetMouseX(), App->input->GetMouseY(), rick_head, 64,b2_dynamicBody));
+		ricks.add(App->physics->CreateChain(App->input->GetMouseX(), App->input->GetMouseY(), rick_head, 64,b2_dynamicBody, 0.0f));
 	
 	}
 

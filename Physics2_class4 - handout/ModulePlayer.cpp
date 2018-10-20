@@ -26,12 +26,10 @@ bool ModulePlayer::Start()
 
 	Shoot = false;
 	
-	Ball = App->physics->CreateCircle(455, 824, 11, b2_dynamicBody);
+	Ball = App->physics->CreateCircle(455, 824, 11, b2_dynamicBody, 0.4f);
 	
 	BallSensor= App->physics->CreateRectangleSensor(455 + 10, 834 + 5, 25, 21);
 	BallSensor->listener = this;
-	LoseSensor= App->physics->CreateRectangleSensor(0, 854, 960, 1);
-	LoseSensor->listener = this;
 
 	force_counter = 0;
 
@@ -49,16 +47,16 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update()
 {
-
+	int x, y;
 	Ball->GetPosition(x, y);
 	
 
-	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
 	{
 		App->scene_intro->leftflipper->body->ApplyAngularImpulse(-5.0f,true);
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
 	{
 		App->scene_intro->rightflipper->body->ApplyAngularImpulse(5.0f, true);
 	}
@@ -83,7 +81,6 @@ update_status ModulePlayer::Update()
 		Ball->body->SetTransform({ PIXEL_TO_METERS(455), PIXEL_TO_METERS(824) }, 0.0f);
 	}
 
-
 	App->renderer->Blit(Spring, spring_control.x, spring_control.y);
 	App->renderer->Blit(ball_texture, x,y);
 
@@ -97,10 +94,6 @@ void ModulePlayer::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		if (bodyA == BallSensor && App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
 		{
 			Shoot = true;
-		}
-		if (bodyA == LoseSensor)
-		{
-			LOG("YOUU LOOOOOOOSE");
 		}
 	}
 }

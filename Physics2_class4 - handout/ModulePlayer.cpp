@@ -30,6 +30,9 @@ bool ModulePlayer::Start()
 	
 	BallSensor= App->physics->CreateRectangleSensor(455 + 10, 834 + 5, 25, 21);
 	BallSensor->listener = this;
+	LoseSensor = App->physics->CreateRectangleSensor(0, 854, 960, 1);
+	LoseSensor->listener = this;
+
 
 	force_counter = 0;
 
@@ -51,12 +54,12 @@ update_status ModulePlayer::Update()
 	Ball->GetPosition(x, y);
 	
 
-	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 	{
 		App->scene_intro->leftflipper->body->ApplyAngularImpulse(-5.0f,true);
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 	{
 		App->scene_intro->rightflipper->body->ApplyAngularImpulse(5.0f, true);
 	}
@@ -94,6 +97,10 @@ void ModulePlayer::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		if (bodyA == BallSensor && App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
 		{
 			Shoot = true;
+		}
+		if (bodyA == LoseSensor)
+		{
+			LOG("YOUU LOOOOOOOSEEEEE");
 		}
 	}
 }

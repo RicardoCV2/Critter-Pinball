@@ -30,6 +30,7 @@ public:
 
 	PhysBody* Ball;
 	PhysBody* BallSensor;
+	PhysBody* LoseSensor;
 
 	bool Shoot;
 

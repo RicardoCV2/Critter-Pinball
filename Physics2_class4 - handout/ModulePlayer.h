@@ -30,8 +30,9 @@ public:
 
 	PhysBody* Ball;
 	PhysBody* BallSensor;
+	PhysBody* LoseSensor;
 
 	bool Shoot;
-
+	int x, y;
 	uint force_counter;
 };

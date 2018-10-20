@@ -19,22 +19,31 @@ bool ModulePlayer::Start()
 {
 	LOG("Loading player");
 
+	//TEXTURES----------------------
 	Spring = App->textures->Load("pinball/PinBall_Spring.png");
 	ball_texture = App->textures->Load("pinball/Ball.png");
+	blocker_texture = App->textures->Load("pinball/slide_blocker.png");
 
+	//RECTS-------------------------
 	spring_control = { 455,834,17,21 };
 
+	//BOOLS-------------------------
 	Shoot = false;
-	
+	restart = false;
+	getpoints = false;
+
+	//BODIES------------------------
 	Ball = App->physics->CreateCircle(455, 824, 11, b2_dynamicBody, 0.4f);
 	
 	BallSensor= App->physics->CreateRectangleSensor(455 + 10, 834 + 5, 25, 21);
 	BallSensor->listener = this;
-	LoseSensor = App->physics->CreateRectangleSensor(0, 854, 960, 1);
-	LoseSensor->listener = this;
 
+	Restart = App->physics->CreateRectangleSensor(240, 870, 480, 10);
+	Restart->listener = this;
 
+	//COUNTERS---------------------
 	force_counter = 0;
+	score = 0;
 
 	return true;
 }
@@ -54,14 +63,14 @@ update_status ModulePlayer::Update()
 	Ball->GetPosition(x, y);
 	
 
-	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
 	{
-		App->scene_intro->leftflipper->body->ApplyAngularImpulse(-5.0f,true);
+		App->scene_intro->leftflipper->body->ApplyAngularImpulse(-7.0f,true);
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
 	{
-		App->scene_intro->rightflipper->body->ApplyAngularImpulse(5.0f, true);
+		App->scene_intro->rightflipper->body->ApplyAngularImpulse(7.0f, true);
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT && spring_control.y<=852 && Shoot==true)
@@ -70,18 +79,37 @@ update_status ModulePlayer::Update()
 		force_counter += 1;
 	}
 	
-	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP && Shoot==true)
 	{
 		float force= ((float)force_counter * 25)/3;
 		spring_control.y = 834;
 		Ball->body->ApplyForce({ 0,-force}, Ball->body->GetLocalCenter(), true);
 		force_counter = 0;
 		Shoot = false;
+		App->scene_intro->slide_block= App->physics->CreateRectangle(253, 26, 5, 31, b2_staticBody);
 	}
 	
 	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
 	{
 		Ball->body->SetTransform({ PIXEL_TO_METERS(455), PIXEL_TO_METERS(824) }, 0.0f);
+		Ball->body->SetLinearVelocity({ 0,0 });
+	}
+
+	if (App->scene_intro->slide_block->body)
+	{
+		App->renderer->Blit(blocker_texture, 251, 11);
+	}
+
+	if (restart == true)
+	{
+		Ball->body->SetTransform({ PIXEL_TO_METERS(455), PIXEL_TO_METERS(824) }, 0.0f);
+		Ball->body->SetLinearVelocity({ 0,0 });
+		restart = false;
+	}
+	if (getpoints == true)
+	{
+		score += 100;
+		getpoints = false;
 	}
 
 	App->renderer->Blit(Spring, spring_control.x, spring_control.y);
@@ -98,14 +126,13 @@ void ModulePlayer::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		{
 			Shoot = true;
 		}
-		if (bodyA == LoseSensor)
+		if (bodyA == Restart)
 		{
-			if (life > 0)
-			{
-				life--;
-				LOG("YOUU LOOOOOOOSEEEEE");
-				Ball->body->SetTransform({ PIXEL_TO_METERS(455), PIXEL_TO_METERS(824) }, 0.0f);
-			}
+			restart = true;
+		}
+		if (bodyA == App->scene_intro->B_1sensor)
+		{
+			LOG("puntos");
 		}
 	}
 }

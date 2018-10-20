@@ -37,6 +37,7 @@ bool ModulePhysics::Start()
 	b2BodyDef bd;
 	ground = world->CreateBody(&bd);
 
+	//Bouncer1 = CreateCircle();
 	// big static circle as "ground" in the middle of the screen
 	int x = SCREEN_WIDTH / 2;
 	int y = SCREEN_HEIGHT / 1.5f;
@@ -333,7 +334,7 @@ bool ModulePhysics::Start()
 		299, 228
 	};
 
-	CreateChain(0, 0, left_small_block, 31, b2_staticBody, 0.0f);
+	CreateChain(0, 0, left_small_block, 31, b2_staticBody, 0.4f);
 
 	int right_small_block[14] = {
 		346, 249,
@@ -345,7 +346,7 @@ bool ModulePhysics::Start()
 		345, 248
 	};
 
-	CreateChain(0, 0, right_small_block, 13, b2_staticBody, 0.0f);
+	CreateChain(0, 0, right_small_block, 13, b2_staticBody, 0.4f);
 
 	int long_block[46] = {
 		108, 357,
@@ -373,7 +374,7 @@ bool ModulePhysics::Start()
 		108, 358
 	};
 
-	CreateChain(0, 0, long_block, 45, b2_staticBody, 0.0f);
+	CreateChain(0, 0, long_block, 45, b2_staticBody, 0.4f);
 
 	int right_long_block[76] = {
 		375, 195,
@@ -416,27 +417,27 @@ bool ModulePhysics::Start()
 		375, 195
 	};
 
-	CreateChain(0, 0, right_long_block, 75, b2_staticBody, 0.0f);
+	CreateChain(0, 0, right_long_block, 75, b2_staticBody, 0.4f);
 
 	int tiny_block_1[18] = {
-		276, 97,
-		276, 78,
-		273, 74,
-		269, 74,
-		266, 76,
-		266, 98,
-		269, 100,
-		273, 100,
-		276, 97
+		274, 97,
+		274, 78,
+		272, 74,
+		270, 74,
+		268, 76,
+		268, 98,
+		270, 100,
+		272, 100,
+		274, 97
 	};
 
-	CreateChain(0, 0, tiny_block_1, 17, b2_staticBody, 0.0f);
+	CreateChain(0, 0, tiny_block_1, 17, b2_staticBody, 0.2f);
 
-	CreateChain(33, 0, tiny_block_1, 17, b2_staticBody, 0.0f);
+	CreateChain(33, 0, tiny_block_1, 17, b2_staticBody, 0.2f);
 
-	CreateChain(67, 0, tiny_block_1, 17, b2_staticBody, 0.0f);
+	CreateChain(67, 0, tiny_block_1, 17, b2_staticBody, 0.2f);
 
-	CreateChain(99, 0, tiny_block_1, 17, b2_staticBody, 0.0f);
+	CreateChain(100, 0, tiny_block_1, 17, b2_staticBody, 0.2f);
 
 
 	return true;
@@ -461,13 +462,14 @@ update_status ModulePhysics::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type, float restitution)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type, float restitution, bool sensor)
 {
 	b2BodyDef body;
 	body.type = type;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);
+	b->SetBullet(true);
 
 	b2CircleShape shape;
 	shape.m_radius = PIXEL_TO_METERS(radius);
@@ -475,6 +477,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type,
 	fixture.shape = &shape;
 	fixture.density = 1.0f;
 	fixture.restitution = restitution;
+	fixture.isSensor = sensor;
 
 	b->CreateFixture(&fixture);
 

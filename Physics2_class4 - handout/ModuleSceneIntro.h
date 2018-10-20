@@ -29,12 +29,23 @@ public:
 	p2List<PhysBody*>	ricks;
 	p2List<PhysBody*>	leftbouncer;
 	p2List<PhysBody*>	rightbouncer;
+	
 	PhysBody*			leftflipper;
 	PhysBody*			rightflipper;
 	PhysBody*			l_flipper_joint;
 	PhysBody*			r_flipper_joint;
+	PhysBody*			bouncer_1;
+	PhysBody*			bouncer_2;
+	PhysBody*			bouncer_3;
+	PhysBody*			slide_block;
 
-	PhysBody* sensor;
+	PhysBody*			sensorblocker;
+	PhysBody*			B_1sensor;
+	PhysBody*			B_2sensor;
+	PhysBody*			B_3sensor;
+
+	bool				open;
+
 	bool sensed;
 
 	SDL_Texture* circle;

@@ -1,17 +1,20 @@
 #include "Globals.h"
 #include "Application.h"
+#include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleSceneIntro.h"
 #include "ModuleInput.h"
 #include "ModuleTextures.h"
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
+#include "ModulePlayer.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	circle = box = rick = NULL;
 	ray_on = false;
 	sensed = false;
+	open = false;
 }
 
 ModuleSceneIntro::~ModuleSceneIntro()
@@ -30,6 +33,9 @@ bool ModuleSceneIntro::Start()
 
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 
+
+	//--------------------------Image sources------------------------------------------------
+
 	circle = App->textures->Load("pinball/wheel.png"); 
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
@@ -43,6 +49,31 @@ bool ModuleSceneIntro::Start()
 
 	//sensor = App->physics->CreateRectangleSensor(455+10, 834+5, 25, 21);
 
+
+	//--------------------------Scene Elements------------------------------------------------
+	
+	bouncer_1 = new PhysBody();
+	bouncer_1 = App->physics->CreateCircle(267, 155, 22, b2_staticBody, 2.0f);
+	B_1sensor = App->physics->CreateCircle(267, 155, 24, b2_staticBody, 2.0f,true);
+	B_1sensor->listener = this;
+	
+	bouncer_2 = new PhysBody();
+	bouncer_2 = App->physics->CreateCircle(370, 162, 22, b2_staticBody, 2.0f);
+	B_2sensor = App->physics->CreateCircle(370, 162, 24, b2_staticBody, 2.0f, true);
+	B_2sensor->listener = this;
+	
+	bouncer_3 = new PhysBody();
+	bouncer_3 = App->physics->CreateCircle(306, 223, 22, b2_staticBody, 2.0f);
+	B_3sensor = App->physics->CreateCircle(306, 223, 24, b2_staticBody, 2.0f, true);
+	B_3sensor->listener = this;
+
+	slide_block = new PhysBody();
+
+	sensorblocker = new PhysBody();
+	sensorblocker = App->physics->CreateRectangleSensor(330, 110, 100, 1);
+	sensorblocker->listener = this;
+	
+	
 	int left_block[22] = {
 		11, 16,
 		11, 105,
@@ -67,7 +98,7 @@ bool ModuleSceneIntro::Start()
 		372, 610
 	};
 	
-	App->physics->CreateChain(0, 0, left_block_bouncer, 9, b2_staticBody, 1.1f);
+	App->physics->CreateChain(0, 0, left_block_bouncer, 9, b2_staticBody, 1.6f);
 
 
 	int right_block[20] = {
@@ -93,8 +124,11 @@ bool ModuleSceneIntro::Start()
 		121, 723
 	};
 	
-	App->physics->CreateChain(0, 0, right_block_bouncer, 9, b2_staticBody, 1.1f);
-
+	App->physics->CreateChain(0, 0, right_block_bouncer, 9, b2_staticBody, 1.6f);
+	
+	//----------------------------------------------------------------------------------------
+	
+	
 	rightflipper = App->physics->CreateRectangle(250+30, 790+13, 77,14, b2_dynamicBody);
 	leftflipper=App->physics->CreateRectangle(140+41, 790+13, 77,14, b2_dynamicBody);
 
@@ -284,6 +318,20 @@ update_status ModuleSceneIntro::Update()
 			App->renderer->DrawLine(ray.x + destination.x, ray.y + destination.y, ray.x + destination.x + normal.x * 25.0f, ray.y + destination.y + normal.y * 25.0f, 100, 255, 100);
 	}
 
+	if (open==true && slide_block->body!=nullptr)
+	{
+		slide_block->body->GetWorld()->DestroyBody(slide_block->body);
+		slide_block->body = nullptr;
+		open = false;
+	}
+
+	char score[64];
+	char Title[64] = "PinBall Score: ";
+	sprintf_s(score, "%d", App->player->score);
+	strcat_s(Title, score);
+
+	App->window->SetTitle(Title);
+
 	return UPDATE_CONTINUE;
 }
 
@@ -291,12 +339,21 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
 	int x, y;
 
-	App->audio->PlayFx(bonus_fx);
+	
 
 	if(bodyA)
 	{
-		bodyA->GetPosition(x, y);
-		App->renderer->DrawCircle(x, y, 50, 100, 100, 100);
+		if (bodyA == sensorblocker && slide_block->body != nullptr)
+		{
+			LOG("hola");
+			open = true;
+		}
+		if (App->player->getpoints==false && (bodyA == B_1sensor || bodyA == B_2sensor || bodyA == B_3sensor))
+		{
+			App->audio->PlayFx(bonus_fx);
+			LOG("puntos");
+			App->player->getpoints = true;
+		}
 	}
 
 	if(bodyB)

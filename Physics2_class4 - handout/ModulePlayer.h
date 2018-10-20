@@ -25,14 +25,19 @@ public:
 
 	SDL_Texture* Spring;
 	SDL_Texture* ball_texture;
+	SDL_Texture* blocker_texture;
 	
 	SDL_Rect spring_control;
 
 	PhysBody* Ball;
 	PhysBody* BallSensor;
-	PhysBody* LoseSensor;
+	PhysBody* Restart;
 
 	bool Shoot;
-	int life = 4;
+	bool restart;
+	bool getpoints;
+
 	uint force_counter;
+	uint score;
+
 };

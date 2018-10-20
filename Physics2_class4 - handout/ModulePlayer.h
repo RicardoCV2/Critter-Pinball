@@ -33,6 +33,6 @@ public:
 	PhysBody* LoseSensor;
 
 	bool Shoot;
-
+	int life = 4;
 	uint force_counter;
 };

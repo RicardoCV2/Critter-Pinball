@@ -100,7 +100,12 @@ void ModulePlayer::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		}
 		if (bodyA == LoseSensor)
 		{
-			LOG("YOUU LOOOOOOOSEEEEE");
+			if (life > 0)
+			{
+				life--;
+				LOG("YOUU LOOOOOOOSEEEEE");
+				Ball->body->SetTransform({ PIXEL_TO_METERS(455), PIXEL_TO_METERS(824) }, 0.0f);
+			}
 		}
 	}
 }

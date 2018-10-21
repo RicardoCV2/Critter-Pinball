@@ -9,6 +9,8 @@
 #define METERS_TO_PIXELS(m) ((int) floor(PIXELS_PER_METER * m))
 #define PIXEL_TO_METERS(p)  ((float) METER_PER_PIXEL * p)
 
+//sound effects http://www.vpforums.org/Tutorials/Sounds/SndLib1.html
+
 class ModulePlayer : public Module
 {
 public:
@@ -32,20 +34,25 @@ public:
 	SDL_Rect		spring_control;
 
 	PhysBody*		Ball;
+	PhysBody*		Ballfollower;
 	PhysBody*		BallSensor;
 	PhysBody*		Restart;
 
 	bool			Shoot;
 	bool			restart;
-	bool			getpoints;
+	bool			getpoints1;
+	bool			getpoints2;
 	bool			pause;
 
 	uint			force_counter;
 	uint			score;
 	uint			lives;
 	uint			ticks;
+	
 	uint			flipperUp;
 	uint			flipperDown;
 	uint			drain;
 	uint			target;
+	uint			collisionfx;
+
 };

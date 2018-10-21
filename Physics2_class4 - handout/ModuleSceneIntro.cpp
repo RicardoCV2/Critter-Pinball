@@ -16,7 +16,6 @@ ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Modul
 	sensed = false;
 	open = false;
 	canon_shoot = false;
-	boost_shot = false;
 }
 
 ModuleSceneIntro::~ModuleSceneIntro()
@@ -41,24 +40,47 @@ bool ModuleSceneIntro::Start()
 	circle = App->textures->Load("pinball/wheel.png"); 
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
-	BackGround= App->textures->Load("pinball/PinBall_Board.png");
+	BackGround= App->textures->Load("pinball/PinBall_Board2.png");
 	RightFlipper = App->textures->Load("pinball/right flipper.png");
 	LeftFlipper = App->textures->Load("pinball/left flipper.png");
 	RightBouncer = App->textures->Load("pinball/right block.png");
 	LeftBouncer = App->textures->Load("pinball/left block.png");
-	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
-	
-	//-------------------------Win letters
-
 	LetterW = App->textures->Load("pinball/w circle.png");
 	LetterI = App->textures->Load("pinball/i circle.png");
 	LetterN = App->textures->Load("pinball/n circle.png");
+	million_1 = App->textures->Load("pinball/1 million.png");
+	million_2 = App->textures->Load("pinball/2 million.png");
+	million_3 = App->textures->Load("pinball/3 million.png");
+	million_4 = App->textures->Load("pinball/4 million.png");
+
+	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+	click = App->audio->LoadFx("pinball/Target2.wav");
 
 	//sensor = App->physics->CreateRectangleSensor(455+10, 834+5, 25, 21);
 
 
 	//--------------------------Scene Elements------------------------------------------------
 	
+	switch_1 = App->physics->CreateCircle(13, 476, 10, b2_staticBody, 0.0f, true);
+	switch_2 = App->physics->CreateCircle(27, 448, 10, b2_staticBody, 0.0f, true);
+	switch_3 = App->physics->CreateCircle(40, 426, 10, b2_staticBody, 0.0f, true);
+	switch_4 = App->physics->CreateCircle(116,355, 5, b2_staticBody, 0.0f, true);
+	switch_5 = App->physics->CreateCircle(206, 342, 6, b2_staticBody, 0.0f, true);
+	switch_6 = App->physics->CreateCircle(235, 352, 6, b2_staticBody, 0.0f, true);
+	switch_7 = App->physics->CreateCircle(344, 351, 5, b2_staticBody, 0.0f, true);
+	switch_8 = App->physics->CreateCircle(428, 471, 6, b2_staticBody, 0.0f, true);
+	switch_9 = App->physics->CreateCircle(436, 501, 6, b2_staticBody, 0.0f, true);
+
+	switch_1->listener = this;
+	switch_2->listener = this;
+	switch_3->listener = this;
+	switch_4->listener = this;
+	switch_5->listener = this;
+	switch_6->listener = this;
+	switch_7->listener = this;
+	switch_8->listener = this;
+	switch_9->listener = this;
+
 	bouncer_1 = new PhysBody();
 	bouncer_1 = App->physics->CreateCircle(267, 155, 22, b2_staticBody, 2.0f);
 	B_1sensor = App->physics->CreateCircle(267, 155, 24, b2_staticBody, 2.0f,true);
@@ -79,13 +101,15 @@ bool ModuleSceneIntro::Start()
 	cannon_block->body->SetTransform(cannon_block->body->GetWorldCenter(), -78 * 0.0174532925);
 
 	sensorblocker_w = new PhysBody();
-	sensorblocker_w = App->physics->CreateRectangleSensor(290, 110, 20, 1);
+	sensorblocker_w = App->physics->CreateRectangleSensor(290, 90, 20, 1);
 	sensorblocker_w->listener = this;
+
 	sensorblocker_i = new PhysBody();
-	sensorblocker_i = App->physics->CreateRectangleSensor(323, 110, 20, 1);
+	sensorblocker_i = App->physics->CreateRectangleSensor(323, 90, 20, 1);
 	sensorblocker_i->listener = this;
+
 	sensorblocker_n = new PhysBody();
-	sensorblocker_n = App->physics->CreateRectangleSensor(356, 110, 20, 1);
+	sensorblocker_n = App->physics->CreateRectangleSensor(356, 90, 20, 1);
 	sensorblocker_n->listener = this;
 	
 	canon_sensor = App->physics->CreateRectangleSensor(17, 845, 30, 30);
@@ -93,6 +117,10 @@ bool ModuleSceneIntro::Start()
 
 	boost_sensor = App->physics->CreateRectangleSensor(425, 400, 23, 29);
 	boost_sensor->listener = this;
+
+	Million = new PhysBody();
+	Million = App->physics->CreateRectangleSensor(220, 220, 35, 1);
+	Million->listener = this;
 	
 	int left_block[22] = {
 		11, 16,
@@ -119,7 +147,9 @@ bool ModuleSceneIntro::Start()
 	};
 	
 	App->physics->CreateChain(0, 0, left_block_bouncer, 9, b2_staticBody, 1.6f);
-
+	
+	LbouncerSensor= App->physics->CreateChainSensor(-1, 0, left_block_bouncer, 9);
+	LbouncerSensor->listener = this;
 
 	int right_block[20] = {
 		61, 10,
@@ -146,11 +176,14 @@ bool ModuleSceneIntro::Start()
 	
 	App->physics->CreateChain(0, 0, right_block_bouncer, 9, b2_staticBody, 1.6f);
 	
+	RbouncerSensor = App->physics->CreateChainSensor(1, 0, right_block_bouncer, 9);
+	RbouncerSensor->listener = this;
+	
 	//----------------------------------------------------------------------------------------
 	
 	
-	rightflipper = App->physics->CreateRectangle(250 + 30, 790 + 15, 77, 14, b2_dynamicBody);
-	leftflipper = App->physics->CreateRectangle(140 + 41, 790 + 18, 77, 14, b2_dynamicBody);
+	rightflipper = App->physics->CreateRectangle(250+30, 790+15, 77,14, b2_dynamicBody);
+	leftflipper=App->physics->CreateRectangle(140+41, 790+18, 77,14, b2_dynamicBody);
 
 	l_flipper_joint =App->physics->CreateCircle(144+9, 800+8, 5, b2_staticBody, 0.0f);
 	r_flipper_joint =App->physics->CreateCircle(300 + 7, 800 + 3, 5, b2_staticBody, 0.0f);
@@ -169,6 +202,121 @@ bool ModuleSceneIntro::Start()
 	joint_1 = (b2RevoluteJoint*)App->physics->world->CreateJoint(&def_1);
 	joint_2 = (b2RevoluteJoint*)App->physics->world->CreateJoint(&def_2);
 
+	int Inside_1[220] = {
+		130, 853,
+		37, 790,
+		32, 791,
+		33, 835,
+		24, 836,
+		20, 836,
+		13, 834,
+		4, 830,
+		4, 819,
+		3, 604,
+		3, 595,
+		6, 589,
+		10, 581,
+		14, 574,
+		18, 570,
+		21, 564,
+		25, 560,
+		30, 555,
+		33, 549,
+		36, 542,
+		36, 534,
+		30, 523,
+		23, 516,
+		14, 508,
+		7, 497,
+		12, 487,
+		16, 480,
+		48, 419,
+		50, 410,
+		51, 400,
+		50, 388,
+		39, 334,
+		27, 287,
+		15, 240,
+		11, 228,
+		10, 215,
+		8, 199,
+		6, 180,
+		5, 162,
+		4, 138,
+		7, 120,
+		10, 97,
+		15, 80,
+		27, 62,
+		40, 42,
+		52, 35,
+		69, 20,
+		81, 14,
+		96, 10,
+		110, 7,
+		123, 6,
+		160, 6,
+		180, 11,
+		192, 23,
+		196, 38,
+		198, 53,
+		194, 65,
+		179, 75,
+		166, 80,
+		150, 88,
+		139, 94,
+		129, 101,
+		128, 110,
+		129, 124,
+		130, 133,
+		135, 139,
+		154, 227,
+		158, 232,
+		169, 229,
+		181, 224,
+		188, 222,
+		201, 218,
+		207, 215,
+		206, 189,
+		191, 192,
+		176, 190,
+		166, 183,
+		155, 177,
+		146, 164,
+		141, 149,
+		143, 132,
+		145, 121,
+		157, 108,
+		173, 98,
+		188, 93,
+		194, 95,
+		207, 95,
+		207, 64,
+		206, 49,
+		213, 32,
+		222, 20,
+		233, 13,
+		253, 5,
+		274, 4,
+		290, 5,
+		380, 4,
+		393, 6,
+		406, 10,
+		420, 16,
+		437, 25,
+		450, 40,
+		457, 51,
+		465, 70,
+		467, 87,
+		467, 95,
+		480, 133,
+		478, 0,
+		0, 0,
+		0, 852,
+		129, 854
+	};
+
+	Chain1 = App->physics->CreateChain(0, 0, Inside_1, 219, b2_staticBody, 0.5f);
+
 	return ret;
 }
 
@@ -184,25 +332,46 @@ bool ModuleSceneIntro::CleanUp()
 update_status ModuleSceneIntro::Update()
 {
 	App->renderer->Blit(BackGround, 0, 0, NULL);
-
+	
 	if (w_passed == true)
 	{
 		App->renderer->Blit(LetterW, 271, 96, NULL);
 	}
+
 	if (i_passed == true)
 	{
 		App->renderer->Blit(LetterI, 304, 94, NULL);
 	}
+
 	if (n_passed == true)
 	{
 		App->renderer->Blit(LetterN, 335, 96, NULL);
 	}
+
 	if (w_passed == true && i_passed == true && n_passed == true)
 	{
 		App->player->score += 100000;
 		w_passed = false;
-		i_passed == false;
-		n_passed == false;
+		i_passed = false;
+		n_passed = false;
+	}
+
+	if (million1 == true)
+	{
+		App->renderer->Blit(million_1, 160, 250, NULL);
+		if (give1m == true)
+		{
+			App->player->score += 1000000;
+			give1m = false;
+		}
+	}
+	if (million2 == true)
+	{
+		if (give2m == true)
+		{
+			App->player->score += 2000000;
+			give2m = false;
+		}
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
@@ -376,6 +545,7 @@ update_status ModuleSceneIntro::Update()
 			canon_shoot = false;
 		}
 	}
+
 	if (boost_shot)
 	{
 		if (SDL_GetTicks() >= ticks)
@@ -410,7 +580,6 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	{
 		if (bodyA == sensorblocker_w || bodyA == sensorblocker_i || bodyA == sensorblocker_n && slide_block->body != nullptr)
 		{
-			
 			open = true;
 		}
 
@@ -427,11 +596,21 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			n_passed = true;
 		}
 
-		if (App->player->getpoints==false && (bodyA == B_1sensor || bodyA == B_2sensor || bodyA == B_3sensor))
+		if (bodyA == Million && million1 != true)
+		{
+			million1 = true;
+			give1m = true;
+		}
+		if (bodyA == Million && million1 == true && million2 != true && give1m == false)
+		{
+			million2 = true;
+			give2m = true;
+		}
+
+		if (App->player->getpoints1==false && (bodyA == B_1sensor || bodyA == B_2sensor || bodyA == B_3sensor))
 		{
 			App->audio->PlayFx(bonus_fx);
-			LOG("puntos");
-			App->player->getpoints = true;
+			App->player->getpoints1 = true;
 		}
 
 		if (bodyA == canon_sensor && canon_shoot == false && App->player->Ball->body->GetLinearVelocity()==stop)
@@ -439,9 +618,23 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			canon_shoot = true;
 			Timer(1000);
 		}
+
 		if (bodyA == boost_sensor && boost_shot == false)
 		{
 			boost_shot = true;
+		}
+
+		if (bodyA == switch_1 || bodyA == switch_2 || bodyA == switch_3 || bodyA == switch_4 || bodyA == switch_5
+			|| bodyA == switch_6 || bodyA == switch_7 || bodyA == switch_8 || bodyA == switch_9)
+		{
+			App->audio->PlayFx(click);
+		}
+
+		if (App->player->getpoints2==false &&(bodyA == LbouncerSensor || bodyB == RbouncerSensor))
+		{
+			App->audio->PlayFx(bonus_fx);
+			LOG("puntos");
+			App->player->getpoints1 = true;
 		}
 	}
 

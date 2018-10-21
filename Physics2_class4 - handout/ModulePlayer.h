@@ -44,5 +44,8 @@ public:
 	uint			score;
 	uint			lives;
 	uint			ticks;
-
+	uint			flipperUp;
+	uint			flipperDown;
+	uint			drain;
+	uint			target;
 };

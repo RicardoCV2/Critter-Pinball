@@ -44,7 +44,9 @@ public:
 	PhysBody*			canon_sensor;
 	PhysBody*			boost_sensor;
 
-	PhysBody*			sensorblocker;
+	PhysBody*			sensorblocker_w;
+	PhysBody*			sensorblocker_i;
+	PhysBody*			sensorblocker_n;
 	PhysBody*			B_1sensor;
 	PhysBody*			B_2sensor;
 	PhysBody*			B_3sensor;
@@ -63,6 +65,9 @@ public:
 	SDL_Texture*		LeftFlipper;
 	SDL_Texture*		LeftBouncer;
 	SDL_Texture*		RightBouncer;
+	SDL_Texture*		LetterW;
+	SDL_Texture*		LetterI;
+	SDL_Texture*		LetterN;
 
 	uint				bonus_fx;
 	uint				ticks;
@@ -70,4 +75,7 @@ public:
 	p2Point<int>		ray;
 	
 	bool				ray_on;
+	bool				w_passed;
+	bool				i_passed;
+	bool				n_passed;
 };

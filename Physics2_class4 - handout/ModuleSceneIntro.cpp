@@ -16,6 +16,7 @@ ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Modul
 	sensed = false;
 	open = false;
 	canon_shoot = false;
+	boost_shot = false;
 }
 
 ModuleSceneIntro::~ModuleSceneIntro()
@@ -76,6 +77,9 @@ bool ModuleSceneIntro::Start()
 	
 	canon_sensor = App->physics->CreateRectangleSensor(17, 845, 30, 30);
 	canon_sensor->listener = this;
+
+	boost_sensor = App->physics->CreateRectangleSensor(425, 400, 23, 29);
+	boost_sensor->listener = this;
 	
 	int left_block[22] = {
 		11, 16,
@@ -337,6 +341,15 @@ update_status ModuleSceneIntro::Update()
 			canon_shoot = false;
 		}
 	}
+	if (boost_shot)
+	{
+		if (SDL_GetTicks() >= ticks)
+		{
+			App->player->Ball->body->ApplyForce({ -100.0f,100.0f }, App->player->Ball->body->GetLocalCenter(), true);
+			LOG("BOOOOOST!!");
+			boost_shot = false;
+		}
+	}
 
 	char score[64];
 	char lives[4];
@@ -375,6 +388,10 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		{
 			canon_shoot = true;
 			Timer(1000);
+		}
+		if (bodyA == boost_sensor && boost_shot == false)
+		{
+			boost_shot = true;
 		}
 	}
 

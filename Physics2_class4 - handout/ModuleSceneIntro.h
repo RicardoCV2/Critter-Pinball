@@ -41,6 +41,7 @@ public:
 	PhysBody*			bouncer_3;
 	PhysBody*			slide_block;
 	PhysBody*			canon_sensor;
+	PhysBody*			boost_sensor;
 
 	PhysBody*			sensorblocker;
 	PhysBody*			B_1sensor;
@@ -51,6 +52,7 @@ public:
 
 	bool				sensed;
 	bool				canon_shoot;
+	bool				boost_shot;
 
 	SDL_Texture*		circle;
 	SDL_Texture*		box;

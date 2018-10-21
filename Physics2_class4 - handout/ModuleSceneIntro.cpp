@@ -52,7 +52,15 @@ bool ModuleSceneIntro::Start()
 	million_2 = App->textures->Load("pinball/2 million.png");
 	million_3 = App->textures->Load("pinball/3 million.png");
 	million_4 = App->textures->Load("pinball/4 million.png");
-	arrow1 = App->textures->Load("pinball/arrow.png");
+	arrow1 = App->textures->Load("pinball/arrow1.png");
+	arrow2 = App->textures->Load("pinball/arrow2.png");
+	arrow3 = App->textures->Load("pinball/arrow3.png");
+	arrow4 = App->textures->Load("pinball/arrow4.png");
+	arrow5 = App->textures->Load("pinball/arrow5.png");
+	arrow6 = App->textures->Load("pinball/arrow6.png");
+	arrow7 = App->textures->Load("pinball/arrow7.png");
+	arrow8 = App->textures->Load("pinball/arrow8.png");
+	arrow9 = App->textures->Load("pinball/arrow9.png");
 
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 	click = App->audio->LoadFx("pinball/Target2.wav");
@@ -359,7 +367,7 @@ update_status ModuleSceneIntro::Update()
 
 	if (million1 == true)
 	{
-		App->renderer->Blit(million_1, 160, 250, NULL);
+		App->renderer->Blit(million_1, 165, 248, NULL);
 		if (give1m == true)
 		{
 			App->player->score += 1000000;
@@ -368,12 +376,16 @@ update_status ModuleSceneIntro::Update()
 	}
 	if (million2 == true)
 	{
+		App->renderer->Blit(million_2, 170, 266, NULL);
 		if (give2m == true)
 		{
 			App->player->score += 2000000;
 			give2m = false;
 		}
 	}
+	//App->renderer->Blit(million_3, 172, 285, NULL);
+	//App->renderer->Blit(million_4, 172, 305, NULL);
+
 
 	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
@@ -559,39 +571,39 @@ update_status ModuleSceneIntro::Update()
 
 	if (arrow_1 == true)
 	{
-		App->renderer->Blit(arrow1, 29, 481);
+		App->renderer->Blit(arrow1, 27,478);
 	}
 	if (arrow_2 == true)
 	{
-		App->renderer->Blit(arrow1, 42, 456);
+		App->renderer->Blit(arrow2, 39, 451);
 	}
 	if (arrow_3 == true)
 	{
-		App->renderer->Blit(arrow1, 55, 432);
+		App->renderer->Blit(arrow3, 53, 429);
 	}
 	if (arrow_4 == true)
 	{
-		App->renderer->Blit(arrow1, 55, 432);
+		App->renderer->Blit(arrow4, 102, 361);
 	}
 	if (arrow_5 == true)
 	{
-		App->renderer->Blit(arrow1, 55, 432);
+		App->renderer->Blit(arrow5, 167, 354);
 	}
 	if (arrow_6 == true)
 	{
-		App->renderer->Blit(arrow1, 55, 432);
+		App->renderer->Blit(arrow6, 199, 365);
 	}
 	if (arrow_7 == true)
 	{
-		App->renderer->Blit(arrow1, 55, 432);
+		App->renderer->Blit(arrow7, 302, 361);
 	}
 	if (arrow_8 == true)
 	{
-		App->renderer->Blit(arrow1, 55, 432);
+		App->renderer->Blit(arrow8, 367, 456);
 	}
 	if (arrow_9 == true)
 	{
-		App->renderer->Blit(arrow1, 55, 432);
+		App->renderer->Blit(arrow9, 376, 487);
 	}
 
 	char score[64];
@@ -639,8 +651,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			million1 = true;
 			give1m = true;
 		}
-		if (bodyA == Million && million1 == true && million2 != true && give1m == false)
-		{
+		if (bodyA == Million && million1 == true && million2 != true) {
 			million2 = true;
 			give2m = true;
 		}

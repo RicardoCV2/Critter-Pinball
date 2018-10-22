@@ -101,6 +101,7 @@ public:
 	uint				bonus_fx;
 	uint				ticks;
 	uint				click;
+	uint				music_bg;
 	
 	p2Point<int>		ray;
 	

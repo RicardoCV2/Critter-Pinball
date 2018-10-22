@@ -64,6 +64,7 @@ bool ModuleSceneIntro::Start()
 
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 	click = App->audio->LoadFx("pinball/Target2.wav");
+	music_bg = App->audio->PlayMusic("pinball/music_bg.ogg");
 
 	//sensor = App->physics->CreateRectangleSensor(455+10, 834+5, 25, 21);
 

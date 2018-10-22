@@ -383,8 +383,25 @@ update_status ModuleSceneIntro::Update()
 			give2m = false;
 		}
 	}
-	//App->renderer->Blit(million_3, 172, 285, NULL);
-	//App->renderer->Blit(million_4, 172, 305, NULL);
+	if (million3 == true)
+	{
+		App->renderer->Blit(million_3, 172, 285, NULL);
+		if (give3m == true)
+		{
+			App->player->score += 3000000;
+			give3m = false;
+		}
+	}
+	if (million4 == true)
+	{
+		App->renderer->Blit(million_4, 172, 305, NULL);
+		if (give4m == true)
+		{
+			App->player->score += 4000000;
+			give4m = false;
+		}
+	}
+
 
 
 	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
@@ -650,12 +667,25 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		{
 			million1 = true;
 			give1m = true;
+			LOG("YOU GET 1 MILLION POINTS !!!!!!!!!!!!!!!!!");
 		}
 		if (bodyA == Million && million1 == true && million2 != true) {
 			million2 = true;
 			give2m = true;
+			LOG("YOU GET 2 MILLION POINTS !!!!!!!!!!!!!!!!!");
 		}
-
+		if (bodyA == Million && million1 == true && million2 == true && million3 != true)
+		{
+			million3 = true;
+			give3m = true;
+			LOG("YOU GET 3 MILLION POINTS !!!!!!!!!!!!!!!!!");
+		}
+		if (bodyA == Million && million1 == true && million2 == true && million3 == true && million4 != true)
+		{
+			million4 = true;
+			give4m = true;
+			LOG("YOU GET 4 MILLION POINTS !!!!!!!!!!!!!!!!!");
+		}
 		if (App->player->getpoints1==false && (bodyA == B_1sensor || bodyA == B_2sensor || bodyA == B_3sensor))
 		{
 			App->audio->PlayFx(bonus_fx);

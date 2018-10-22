@@ -645,7 +645,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 
 	if(bodyA)
 	{
-		if (bodyA == sensorblocker_w || bodyA == sensorblocker_i || bodyA == sensorblocker_n && slide_block->body != nullptr)
+		if ((bodyA == sensorblocker_w || bodyA == sensorblocker_i || bodyA == sensorblocker_n) && slide_block->body != nullptr)
 		{
 			open = true;
 		}

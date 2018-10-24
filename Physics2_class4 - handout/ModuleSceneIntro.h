@@ -101,6 +101,7 @@ public:
 	uint				bonus_fx;
 	uint				ticks;
 	uint				click;
+	uint				music_bg;
 	
 	p2Point<int>		ray;
 	
@@ -119,10 +120,10 @@ public:
 	bool				arrow_8;
 	bool				arrow_9;
 
-	bool				million1;
-	bool				million2;
-	bool				million3;
-	bool				million4;
+	bool				million1 = false;
+	bool				million2 = false;
+	bool				million3 = false;
+	bool				million4 = false;
 
 	bool				give1m;
 	bool				give2m;

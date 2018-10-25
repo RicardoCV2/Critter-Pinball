@@ -46,6 +46,7 @@ public:
 
 	uint			force_counter;
 	uint			score;
+	uint			highscore;
 	uint			lives;
 	uint			ticks;
 	

@@ -625,14 +625,20 @@ update_status ModuleSceneIntro::Update()
 	}
 
 	char score[64];
+	char highscore[64];
 	char lives[4];
-	char Title[64] = "PinBall Score: ";
+	char Title[100] = "PinBall Score: ";
 	char Num_lives[32] = "Lives: ";
+	char High[32] = "Highscore: ";
 	sprintf_s(score, "%d   ", App->player->score);
-	sprintf_s(lives, "%d", App->player->lives);
+	sprintf_s(lives, "%d  ", App->player->lives);
+	sprintf_s(highscore, "%d   ", App->player->highscore);
 	strcat_s(Title, score);
 	strcat_s(Title, Num_lives);
 	strcat_s(Title, lives);
+	strcat_s(Title, High);
+	strcat_s(Title, highscore);
+	
 
 	App->window->SetTitle(Title);
 

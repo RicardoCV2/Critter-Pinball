@@ -53,6 +53,7 @@ bool ModulePlayer::Start()
 
 	//COUNTERS---------------------
 	force_counter = 0;
+	highscore = 0;
 	score = 0;
 	lives = 3;
 
@@ -156,6 +157,10 @@ update_status ModulePlayer::Update()
 
 		if(lives==0) //if we want to count from 2 to 0 then change this "if" for an "else"
 		{
+			if (score > highscore)
+			{
+				highscore = score;
+			}
 			lives = 3;
 			score = 0;
 			Timer(2000);
